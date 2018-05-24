@@ -1,0 +1,5 @@
+.firebaserc
+firebase.json
+/functions/node_modules/*
+/functions/config/development
+/functions/config/release
