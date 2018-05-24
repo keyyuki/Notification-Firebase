@@ -1,6 +1,6 @@
 import MockBase from './MockBase';
 
-class OrganizationMock extends MockBase 
+export default class OrganizationMock extends MockBase 
 {
     static TABLE_NAME = 'organizations';    
 

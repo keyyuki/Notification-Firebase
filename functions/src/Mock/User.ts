@@ -1,6 +1,6 @@
 import MockBase from './MockBase';
 
-class UserModel extends MockBase 
+export default class UserModel extends MockBase 
 {
     static TABLE_NAME = 'users';    
 

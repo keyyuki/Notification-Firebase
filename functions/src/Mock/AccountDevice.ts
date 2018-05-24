@@ -1,26 +1,27 @@
 import MockBase from './MockBase';
 
-export default class Apps extends MockBase 
+export default class AccountsDevices extends MockBase 
 {
-    static TABLE_NAME = 'apps';    
+    static TABLE_NAME = 'accounts-devices';    
 
     toStandardData = (data) => {
         return {
-            name: '',
-            code: '',
-            serviceId: '',
+            accountId: '',
+            deviceId: '',
+            accountIdentifier: '',
+            deviceToken: '',
             ...data
         };
     }
 
-    isExisted = async(serviceId, code) => {
-        if(!serviceId || !code){
+    isExisted = async(accountId, deviceId) => {
+        if(!accountId || !deviceId){
             throw new Error('Invalid param');
         }
         try {
-            const snap = await this.db.collection(Apps.TABLE_NAME)
-                .where('serviceId', '==', serviceId)       
-                .where('identifier', '==', code)          
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
+                .where('accountId', '==', accountId)       
+                .where('deviceId', '==', deviceId)          
                 .limit(1)
                 .get();
             if(snap.empty){
@@ -28,7 +29,28 @@ export default class Apps extends MockBase
             }
             return snap.docs.shift();    
         } catch (error) {
-            console.error('Error at Apps.isExisted with params: ', {serviceId, code});
+            console.error('Error at AccountsDevices.isExisted with params: ', {accountId, deviceId});
+            console.error(error);
+            throw new Error('unknow error');    
+        }
+    }
+
+    isExistedByIdentifierAndToken = async(accountIdentifier, deviceToken) => {
+        if(!accountIdentifier || !deviceToken){
+            throw new Error('Invalid param');
+        }
+        try {
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
+                .where('accountIdentifier', '==', accountIdentifier)       
+                .where('deviceToken', '==', deviceToken)          
+                .limit(1)
+                .get();
+            if(snap.empty){
+                return false;
+            }
+            return snap.docs.shift();    
+        } catch (error) {
+            console.error('Error at AccountsDevices.isExistedByIdentifierAndToken with params: ', {accountIdentifier, deviceToken});
             console.error(error);
             throw new Error('unknow error');    
         }
@@ -42,7 +64,7 @@ export default class Apps extends MockBase
             throw new Error('invalid param');        
         }
         try {
-            const snap = await this.db.collection(Apps.TABLE_NAME)
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
                 .doc(id)
                 .get();
             if(!snap.exists){
@@ -50,7 +72,7 @@ export default class Apps extends MockBase
             }
             return snap;
         } catch (error) {
-            console.error('Error at Apps.get with params: ', {id});
+            console.error('Error at AccountsDevices.get with params: ', {id});
             console.error(error);
             return false;  
         }
@@ -64,11 +86,11 @@ export default class Apps extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Apps.TABLE_NAME)
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
                 .add(this.toStandardData(data));
             return snap;
         } catch (error) {
-            console.error('Error at Apps.add with params: ', {data});
+            console.error('Error at AccountsDevices.add with params: ', {data});
             console.error(error);
             return false;
         }
@@ -83,11 +105,11 @@ export default class Apps extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Apps.TABLE_NAME).doc(id).update(data);
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME).doc(id).update(data);
             
             return snap;
         } catch (error) {
-            console.error('Error at Apps.update with params: ', {id, data});
+            console.error('Error at AccountsDevices.update with params: ', {id, data});
             console.error(error);
             return false;
         }
@@ -102,10 +124,10 @@ export default class Apps extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Apps.TABLE_NAME).doc(id).set(data);            
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME).doc(id).set(data);            
             return snap;
         } catch (error) {
-            console.error('Error at Apps.set with params: ', {id, data});
+            console.error('Error at AccountsDevices.set with params: ', {id, data});
             console.error(error);
             return false;
         }
