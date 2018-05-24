@@ -1,6 +1,6 @@
-###Notification Firebase ###
+### Notification Firebase ###
 
-##Giới thiệu chung ##
+## Giới thiệu chung ##
 
 Là hệ thống quản lí việc push notification cho các app thuộc các hệ thống con. 
 
@@ -8,7 +8,7 @@ Nếu có gì không hiểu có thể liên hệ email keyyuki@gmail.com hoặc 
 
 Tài liệu dự án sẽ upload sau
 
-##Cách implement ##
+## Cách implement ##
 
 Yêu cầu cần có 1 dự án firebase. Tạo trên trang (https://console.firebase.google.com/u/0/)
 
@@ -22,7 +22,7 @@ Tại trang firebase project của bạn, generate 1 account service (project se
 
 Ok thế là xong rồi đó. Nhưng ko dc giải thích về cấu trúc thì cũng chả chạy dc được đâu. Rất cảm ơn bạn đã chịu khó đọc hết từ nãy đến giờ.
 
-##Licence ##
+## Licence ##
 
 Published by Nhanh.vn
 
