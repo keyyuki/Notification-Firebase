@@ -1,4 +1,5 @@
-import MockBase from './MockBase';
+import MockBase from './MockBase.mock';
+import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 export default class AccountsDevices extends MockBase 
 {
@@ -27,7 +28,8 @@ export default class AccountsDevices extends MockBase
             if(snap.empty){
                 return false;
             }
-            return snap.docs.shift();    
+            this.currentDoc = snap.docs.shift();    
+            return this.currentDoc;
         } catch (error) {
             console.error('Error at AccountsDevices.isExisted with params: ', {accountId, deviceId});
             console.error(error);
@@ -48,7 +50,8 @@ export default class AccountsDevices extends MockBase
             if(snap.empty){
                 return false;
             }
-            return snap.docs.shift();    
+            this.currentDoc = snap.docs.shift();    
+            return this.currentDoc;
         } catch (error) {
             console.error('Error at AccountsDevices.isExistedByIdentifierAndToken with params: ', {accountIdentifier, deviceToken});
             console.error(error);
@@ -70,7 +73,8 @@ export default class AccountsDevices extends MockBase
             if(!snap.exists){
                 return false;
             }
-            return snap;
+            this.currentDoc = snap;
+            return this.currentDoc;
         } catch (error) {
             console.error('Error at AccountsDevices.get with params: ', {id});
             console.error(error);

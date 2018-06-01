@@ -1,28 +1,24 @@
 import * as express from 'express';
+import ServiceMock from '../../../Mock/Service.mock';
+import { AuthenService } from '../Service/Authentication.service';
+
 const app = express.Router();
 
-
-app.get('/', (request, response) =>{
-    response.send('only serve post request');
-    return;
+app.get('/create-nhanh-service', (request, response) =>{    
+    var serviceMock = new ServiceMock();
+    if(!serviceMock.isExisted('admin-nhanh')){
+        serviceMock.add({
+            name: 'Admin Nhanh',
+            code: 'admin-nhanh',
+            url: 'https://nhanh.vn',
+            key: '2ddec20f4234b18dd6418ac039a35a0d'
+        });
+    }
+    
 });
-
 
 app.post('/create-topic', (request, response) => {
-
+    response.send(AuthenService.token);
 });
-
-
-
-app.post('/adddevice', (request, response) =>{
-    const userId = request.body.userId;
-    const deviceToken = request.body.deviceToken;
-    console.log(request.body);
-    if(!userId || !deviceToken){
-        return response.send({code: 0, messages: ['Invalid Params']});
-    }
-    response.send({code: 1, messages: ['ok']});
-    return true;
-})
 
 export default app;

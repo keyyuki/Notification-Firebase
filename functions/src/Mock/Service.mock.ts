@@ -1,34 +1,59 @@
-import MockBase from './MockBase';
+import MockBase from './MockBase.mock';
 
-export default class Accounts extends MockBase 
+export default class ServiceMock extends MockBase 
 {
-    static TABLE_NAME = 'accounts';    
+    static TABLE_NAME = 'services';    
 
     toStandardData = (data) => {
         return {
-            serviceId: '',
-            userId: '',
-            identifier: '',
+            name: '',
+            code: '',
+            token: '',
             ...data
         };
     }
 
-    isExisted = async(serviceId, userId) => {
-        if(!serviceId || !userId){
+    generateToken = () => {
+        
+    }
+
+    findByToken = async(token) => {
+        if(!token){
             throw new Error('Invalid param');
         }
         try {
-            const snap = await this.db.collection(Accounts.TABLE_NAME)
-                .where('serviceId', '==', serviceId)       
-                .where('userId', '==', userId)          
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME)
+                .where('token', '==', token)                
                 .limit(1)
                 .get();
             if(snap.empty){
                 return false;
             }
-            return snap.docs.shift();    
+            this.currentDoc = snap.docs.shift();    
+            return this.currentDoc;
         } catch (error) {
-            console.error('Error at Accounts.isExisted with params: ', {serviceId, userId});
+            console.error('Error at ServiceMock.findByToken with params: ', {token});
+            console.error(error);
+            return false;
+        }
+    }
+
+    isExisted = async(code) => {
+        if(!code){
+            throw new Error('Invalid param');
+        }
+        try {
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME)
+                .where('code', '==', code)                
+                .limit(1)
+                .get();
+            if(snap.empty){
+                return false;
+            }
+            this.currentDoc = snap.docs.shift();    
+            return this.currentDoc;
+        } catch (error) {
+            console.error('Error at ServiceMock.isExisted with params: ', {code});
             console.error(error);
             throw new Error('unknow error');    
         }
@@ -42,15 +67,16 @@ export default class Accounts extends MockBase
             throw new Error('invalid param');        
         }
         try {
-            const snap = await this.db.collection(Accounts.TABLE_NAME)
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME)
                 .doc(id)
                 .get();
             if(!snap.exists){
                 return false;
             }
-            return snap;
+            this.currentDoc = snap;
+            return this.currentDoc;
         } catch (error) {
-            console.error('Error at Accounts.get with params: ', {id});
+            console.error('Error at ServiceMock.get with params: ', {id});
             console.error(error);
             return false;  
         }
@@ -64,11 +90,11 @@ export default class Accounts extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Accounts.TABLE_NAME)
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME)
                 .add(this.toStandardData(data));
             return snap;
         } catch (error) {
-            console.error('Error at Accounts.add with params: ', {data});
+            console.error('Error at ServiceMock.add with params: ', {data});
             console.error(error);
             return false;
         }
@@ -83,11 +109,11 @@ export default class Accounts extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Accounts.TABLE_NAME).doc(id).update(data);
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME).doc(id).update(data);
             
             return snap;
         } catch (error) {
-            console.error('Error at Accounts.update with params: ', {id, data});
+            console.error('Error at ServiceMock.update with params: ', {id, data});
             console.error(error);
             return false;
         }
@@ -102,10 +128,10 @@ export default class Accounts extends MockBase
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(Accounts.TABLE_NAME).doc(id).set(data);            
+            const snap = await this.db.collection(ServiceMock.TABLE_NAME).doc(id).set(data);            
             return snap;
         } catch (error) {
-            console.error('Error at Accounts.set with params: ', {id, data});
+            console.error('Error at ServiceMock.set with params: ', {id, data});
             console.error(error);
             return false;
         }

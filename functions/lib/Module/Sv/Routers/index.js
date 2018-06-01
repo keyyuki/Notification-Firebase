@@ -1,20 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const Authentication_service_1 = require("../Service/Authentication.service");
 const app = express.Router();
-app.get('/', (request, response) => {
-    response.send('only serve post request');
-    return;
-});
-app.post('/regisdevice', (request, response) => {
-    const userId = request.body.userId;
-    const deviceToken = request.body.deviceToken;
-    console.log(request.body);
-    if (!userId || !deviceToken) {
-        return response.send({ code: 0, messages: ['Invalid Params'] });
+app.get('/create-nhanh-service', (request, response) => {
+    /*
+    var serviceMock = new ServiceMock();
+    if(!serviceMock.isExisted('admin-nhanh')){
+        serviceMock.add({
+            name: 'Admin Nhanh',
+            code: 'admin-nhanh',
+            url: 'https://nhanh.vn'
+        })
     }
-    response.send({ code: 1, messages: ['ok'] });
-    return true;
+    */
+});
+app.post('/create-topic', (request, response) => {
+    response.send(Authentication_service_1.AuthenService.token);
 });
 exports.default = app;
 //# sourceMappingURL=index.js.map

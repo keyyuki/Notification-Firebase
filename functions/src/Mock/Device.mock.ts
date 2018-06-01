@@ -1,4 +1,4 @@
-import MockBase from './MockBase';
+import MockBase from './MockBase.mock';
 
 export default class Devices extends MockBase 
 {
@@ -25,7 +25,8 @@ export default class Devices extends MockBase
             if(snap.empty){
                 return false;
             }
-            return snap.docs.shift();    
+            this.currentDoc = snap.docs.shift();    
+            return this.currentDoc;
         } catch (error) {
             console.error('Error at Devices.isExisted with params: ', {token});
             console.error(error);
@@ -47,7 +48,8 @@ export default class Devices extends MockBase
             if(!snap.exists){
                 return false;
             }
-            return snap;
+            this.currentDoc = snap;
+            return this.currentDoc;
         } catch (error) {
             console.error('Error at Devices.get with params: ', {id});
             console.error(error);
