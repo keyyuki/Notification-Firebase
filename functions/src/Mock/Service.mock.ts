@@ -86,7 +86,7 @@ export default class ServiceMock extends MockBase
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
     add = async(data) => {
-        if(!data || !data.email){
+        if(!data || !data.code){
             throw new Error('invalid param');   
         }
         try {

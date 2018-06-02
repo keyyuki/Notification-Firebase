@@ -1,0 +1,35 @@
+[debug] [2018-06-01T07:56:42.997Z] ----------------------------------------------------------------------
+[debug] [2018-06-01T07:56:43.013Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\keyyu\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-06-01T07:56:43.013Z] CLI Version:   3.18.4
+[debug] [2018-06-01T07:56:43.013Z] Platform:      win32
+[debug] [2018-06-01T07:56:43.013Z] Node Version:  v8.11.1
+[debug] [2018-06-01T07:56:43.013Z] Time:          Fri Jun 01 2018 14:56:43 GMT+0700 (SE Asia Standard Time)
+[debug] [2018-06-01T07:56:43.013Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-06-01T07:56:43.029Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-06-01T07:56:43.029Z] > authorizing via signed-in user
+[debug] [2018-06-01T07:56:43.044Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/nhanh-notification-dev  
+  
+ Fri Jun 01 2018 14:56:43 GMT+0700 (SE Asia Standard Time)
+[debug] [2018-06-01T07:56:44.150Z] <<< HTTP RESPONSE 200
+[debug] [2018-06-01T07:56:44.157Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/nhanh-notification-dev/tokens  
+  
+ Fri Jun 01 2018 14:56:44 GMT+0700 (SE Asia Standard Time)
+[debug] [2018-06-01T07:56:45.138Z] <<< HTTP RESPONSE 200
+[debug] [2018-06-01T07:56:45.141Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/nhanh-notification-dev  
+  
+ Fri Jun 01 2018 14:56:45 GMT+0700 (SE Asia Standard Time)
+[debug] [2018-06-01T07:56:46.593Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\keyyu\Workspace\NotificationFirebase'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-06-01T07:56:48.282Z] Fetching environment
+[debug] [2018-06-01T07:56:48.282Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/820207856177:getServerAppConfig  
+  
+ Fri Jun 01 2018 14:56:48 GMT+0700 (SE Asia Standard Time)
+[debug] [2018-06-01T07:56:49.186Z] <<< HTTP RESPONSE 200
+[debug] [2018-06-01T07:56:49.186Z] Starting @google-cloud/functions-emulator
+[debug] [2018-06-01T07:56:53.273Z] Parsing function triggers
+[info] +  functions: initialNhanhService: http://localhost:5000/nhanh-notification-dev/us-central1/initialNhanhService
+[info] +  functions: sv: http://localhost:5000/nhanh-notification-dev/us-central1/sv
