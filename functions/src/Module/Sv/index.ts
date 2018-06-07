@@ -1,6 +1,6 @@
 import * as express from 'express';
 import Authentication from './Plugin/Authentication';
-import ManageRoute from './Routers';
+import ManageRoute from './Routes';
 import ServiceMock from '../../Mock/Service.mock';
 
 const cookieParse = require('cookie-parser')() ;

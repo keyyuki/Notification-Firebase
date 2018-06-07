@@ -1,5 +1,6 @@
 import MockBase from './MockBase.mock';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 
 export default class AccountsDevices extends MockBase 
 {
@@ -15,7 +16,7 @@ export default class AccountsDevices extends MockBase
         };
     }
 
-    isExisted = async(accountId, deviceId) => {
+    isExisted = async(accountId, deviceId) : Promise<DocumentSnapshot | false> => {
         if(!accountId || !deviceId){
             throw new Error('Invalid param');
         }
@@ -27,9 +28,8 @@ export default class AccountsDevices extends MockBase
                 .get();
             if(snap.empty){
                 return false;
-            }
-            this.currentDoc = snap.docs.shift();    
-            return this.currentDoc;
+            }           
+            return snap.docs.shift();   
         } catch (error) {
             console.error('Error at AccountsDevices.isExisted with params: ', {accountId, deviceId});
             console.error(error);
@@ -37,7 +37,7 @@ export default class AccountsDevices extends MockBase
         }
     }
 
-    isExistedByIdentifierAndToken = async(accountIdentifier, deviceToken) => {
+    isExistedByIdentifierAndToken = async(accountIdentifier, deviceToken) : Promise<DocumentSnapshot | false> => {
         if(!accountIdentifier || !deviceToken){
             throw new Error('Invalid param');
         }
@@ -49,9 +49,8 @@ export default class AccountsDevices extends MockBase
                 .get();
             if(snap.empty){
                 return false;
-            }
-            this.currentDoc = snap.docs.shift();    
-            return this.currentDoc;
+            }              
+            return snap.docs.shift(); 
         } catch (error) {
             console.error('Error at AccountsDevices.isExistedByIdentifierAndToken with params: ', {accountIdentifier, deviceToken});
             console.error(error);
@@ -62,78 +61,55 @@ export default class AccountsDevices extends MockBase
     /**
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
-    get = async(id) =>{
+    get = async(id) : Promise<DocumentSnapshot | null> =>{
         if(!id){
-            throw new Error('invalid param');        
+            return null;   
         }
         try {
             const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
                 .doc(id)
                 .get();
             if(!snap.exists){
-                return false;
-            }
-            this.currentDoc = snap;
-            return this.currentDoc;
+                return null;
+            }            
+            return snap;
         } catch (error) {
             console.error('Error at AccountsDevices.get with params: ', {id});
             console.error(error);
-            return false;  
+            return null;
         }
     }
 
     /**
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
-    add = async(data) => {
-        if(!data || !data.email){
+    add = async(data) : Promise<DocumentSnapshot> => {
+        if(!data || !data.accountId || !data.deviceId || !data.accountIdentifier || !data.deviceToken){
             throw new Error('invalid param');   
         }
         try {
             const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
                 .add(this.toStandardData(data));
-            return snap;
+            return snap.get();
         } catch (error) {
             console.error('Error at AccountsDevices.add with params: ', {data});
             console.error(error);
-            return false;
+            throw error;
         }
     }
 
-    /**
-     * Hàm update sẽ cập nhật thêm field vào cho document
-     * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-     */
-    update = async(id, data) => {
-        if(!id || !data ){
-            throw new Error('invalid param');   
+    getAllByDeviceIdExceptAccountId = async(deviceId: String, exceptAccountId : String) : Promise<Array<DocumentSnapshot> | null>=> {
+        if(!deviceId || !exceptAccountId)        {
+            throw new Error('invalid param');
         }
-        try {
-            const snap = await this.db.collection(AccountsDevices.TABLE_NAME).doc(id).update(data);
-            
-            return snap;
-        } catch (error) {
-            console.error('Error at AccountsDevices.update with params: ', {id, data});
-            console.error(error);
-            return false;
+        const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
+            .where('deviceId', '==', deviceId)
+            .where('accountId', '>', exceptAccountId)
+            .where('accountId', '<', exceptAccountId)
+            .get()
+        if(snap.empty){
+            return null;
         }
-    }
-
-    /**
-     * hàm set sẽ set lại toàn bộ giá trị cho document
-     * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-     */
-    set = async(id, data) => {
-        if(!id || !data || !data.nhanhUserId || !data.deviceToken){
-            throw new Error('invalid param');   
-        }
-        try {
-            const snap = await this.db.collection(AccountsDevices.TABLE_NAME).doc(id).set(data);            
-            return snap;
-        } catch (error) {
-            console.error('Error at AccountsDevices.set with params: ', {id, data});
-            console.error(error);
-            return false;
-        }
+        return snap.docs;
     }
 }

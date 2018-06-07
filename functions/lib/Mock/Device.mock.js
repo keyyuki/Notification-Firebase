@@ -27,8 +27,7 @@ class Devices extends MockBase_mock_1.default {
                 if (snap.empty) {
                     return false;
                 }
-                this.currentDoc = snap.docs.shift();
-                return this.currentDoc;
+                return snap.docs.shift();
             }
             catch (error) {
                 console.error('Error at Devices.isExisted with params: ', { token });
@@ -41,76 +40,39 @@ class Devices extends MockBase_mock_1.default {
          */
         this.get = (id) => __awaiter(this, void 0, void 0, function* () {
             if (!id) {
-                throw new Error('invalid param');
+                return null;
             }
             try {
                 const snap = yield this.db.collection(Devices.TABLE_NAME)
                     .doc(id)
                     .get();
                 if (!snap.exists) {
-                    return false;
+                    return null;
                 }
-                this.currentDoc = snap;
-                return this.currentDoc;
+                return snap;
             }
             catch (error) {
                 console.error('Error at Devices.get with params: ', { id });
                 console.error(error);
-                return false;
+                return null;
             }
         });
         /**
          * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
          */
         this.add = (data) => __awaiter(this, void 0, void 0, function* () {
-            if (!data || !data.email) {
+            if (!data || !data.token) {
                 throw new Error('invalid param');
             }
             try {
                 const snap = yield this.db.collection(Devices.TABLE_NAME)
                     .add(this.toStandardData(data));
-                return snap;
+                return snap.get();
             }
             catch (error) {
                 console.error('Error at Devices.add with params: ', { data });
                 console.error(error);
-                return false;
-            }
-        });
-        /**
-         * Hàm update sẽ cập nhật thêm field vào cho document
-         * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-         */
-        this.update = (id, data) => __awaiter(this, void 0, void 0, function* () {
-            if (!id || !data) {
-                throw new Error('invalid param');
-            }
-            try {
-                const snap = yield this.db.collection(Devices.TABLE_NAME).doc(id).update(data);
-                return snap;
-            }
-            catch (error) {
-                console.error('Error at Devices.update with params: ', { id, data });
-                console.error(error);
-                return false;
-            }
-        });
-        /**
-         * hàm set sẽ set lại toàn bộ giá trị cho document
-         * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-         */
-        this.set = (id, data) => __awaiter(this, void 0, void 0, function* () {
-            if (!id || !data || !data.nhanhUserId || !data.deviceToken) {
-                throw new Error('invalid param');
-            }
-            try {
-                const snap = yield this.db.collection(Devices.TABLE_NAME).doc(id).set(data);
-                return snap;
-            }
-            catch (error) {
-                console.error('Error at Devices.set with params: ', { id, data });
-                console.error(error);
-                return false;
+                throw error;
             }
         });
     }

@@ -1,5 +1,6 @@
 import MockBase from './MockBase.mock';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 
 export default class Accounts extends MockBase 
 {
@@ -14,7 +15,7 @@ export default class Accounts extends MockBase
         };
     }
 
-    isExisted = async(serviceId, userId) => {
+    isExisted = async(serviceId, userId) : Promise<DocumentSnapshot | false>=> {
         if(!serviceId || !userId){
             throw new Error('Invalid param');
         }
@@ -27,53 +28,52 @@ export default class Accounts extends MockBase
             if(snap.empty){
                 return false;
             }
-            this.currentDoc = snap.docs.shift();    
-            return this.currentDoc;
+            
+            return snap.docs.shift();  
         } catch (error) {
             console.error('Error at Accounts.isExisted with params: ', {serviceId, userId});
             console.error(error);
-            throw new Error('unknow error');    
+            return false;
         }
     }
 
     /**
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
-    get = async(id) =>{
+    get = async(id) : Promise<DocumentSnapshot | null> =>{
         if(!id){
-            throw new Error('invalid param');        
+            return null;     
         }
         try {
             const snap = await this.db.collection(Accounts.TABLE_NAME)
                 .doc(id)
                 .get();
             if(!snap.exists){
-                return false;
-            }
-            this.currentDoc = snap;
-            return this.currentDoc;
+                return null;
+            }           
+            return snap;
         } catch (error) {
             console.error('Error at Accounts.get with params: ', {id});
             console.error(error);
-            return false;  
+            return null;  
         }
     }
 
     /**
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
-    add = async(data) => {
-        if(!data || !data.email){
+    add = async(data)=> {
+        if(!data || !data.userId || !data.serviceId){
             throw new Error('invalid param');   
         }
         try {
             const snap = await this.db.collection(Accounts.TABLE_NAME)
                 .add(this.toStandardData(data));
-            return snap;
+            return await snap.get();
         } catch (error) {
             console.error('Error at Accounts.add with params: ', {data});
             console.error(error);
-            return false;
+            throw new Error('onAdd Account error');   
         }
     }
 

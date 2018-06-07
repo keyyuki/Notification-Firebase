@@ -1,4 +1,6 @@
 import MockBase from './MockBase.mock';
+import * as admin from 'firebase-admin';
+import { DocumentSnapshot } from '@google-cloud/firestore';
 
 export default class UserModel extends MockBase 
 {
@@ -11,103 +13,64 @@ export default class UserModel extends MockBase
             ...data
         };
     }
-
-    isExisted = async(email) => {
-        if(!email){
-            throw new Error('Invalid param');
-        }
-        try {
-            const snap = await this.db.collection(UserModel.TABLE_NAME)
-                .where('email', '==', email)                
-                .limit(1)
-                .get();
-            if(snap.empty){
-                return false;
-            }
-            this.currentDoc = snap.docs.shift();    
-            return this.currentDoc;
-        } catch (error) {
-            console.error('Error at UserModel.isExisted with params: ', {email});
-            console.error(error);
-            throw new Error('unknow error');    
-        }
-    }
-
-    /**
-     * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-     */
-    get = async(id) =>{
+    
+    get = async(id) : Promise<DocumentSnapshot | null> =>{
         if(!id){
-            throw new Error('invalid param');        
+            return null;  
         }
         try {
             const snap = await this.db.collection(UserModel.TABLE_NAME)
                 .doc(id)
                 .get();
             if(!snap.exists){
-                return false;
-            }
-            this.currentDoc = snap;
-            return this.currentDoc;
+                return null;
+            }            
+            return snap;
         } catch (error) {
             console.error('Error at UserModel.get with params: ', {id});
             console.error(error);
-            return false;  
+            return null;  
+        }
+    }
+
+    getByEmail = async(email: String) : Promise<DocumentSnapshot | null>=> {
+        if(!email){
+            return null;
+        }
+        try {
+            const snap = await this.db.collection(UserModel.TABLE_NAME)
+            .where('email', '==', email)
+            .limit(1)
+            .get();
+            if(snap.empty){
+                return null;
+            }
+            return snap.docs.shift();
+        } catch (error) {
+            console.error('Error at UserModel.getByEmail with params: ', {email});
+            console.error(error);
+            return null;  
         }
     }
 
     /**
      * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
      */
-    add = async(data) => {
+    add = async(data) : Promise<admin.firestore.DocumentSnapshot>  => {
         if(!data || !data.email){
             throw new Error('invalid param');   
         }
         try {
-            const snap = await this.db.collection(UserModel.TABLE_NAME)
+            const ref = await this.db.collection(UserModel.TABLE_NAME)
                 .add(this.toStandardData(data));
+            const snap = await ref.get();
             return snap;
         } catch (error) {
             console.error('Error at UserModel.add with params: ', {data});
             console.error(error);
-            return false;
+            throw error;   
         }
     }
 
-    /**
-     * Hàm update sẽ cập nhật thêm field vào cho document
-     * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-     */
-    update = async(id, data) => {
-        if(!id || !data ){
-            throw new Error('invalid param');   
-        }
-        try {
-            const snap = await this.db.collection(UserModel.TABLE_NAME).doc(id).update(data);
-            
-            return snap;
-        } catch (error) {
-            console.error('Error at UserModel.update with params: ', {id, data});
-            console.error(error);
-            return false;
-        }
-    }
-
-    /**
-     * hàm set sẽ set lại toàn bộ giá trị cho document
-     * @returns Boolean | DocumentSnapshot (https://cloud.google.com/nodejs/docs/reference/firestore/0.13.x/DocumentSnapshot)
-     */
-    set = async(id, data) => {
-        if(!id || !data || !data.nhanhUserId || !data.deviceToken){
-            throw new Error('invalid param');   
-        }
-        try {
-            const snap = await this.db.collection(UserModel.TABLE_NAME).doc(id).set(data);            
-            return snap;
-        } catch (error) {
-            console.error('Error at UserModel.set with params: ', {id, data});
-            console.error(error);
-            return false;
-        }
-    }
+    
 }
