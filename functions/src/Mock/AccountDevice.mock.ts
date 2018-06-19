@@ -1,6 +1,6 @@
 import MockBase from './MockBase.mock';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
-import { DocumentSnapshot } from '@google-cloud/firestore';
+import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 export default class AccountsDevices extends MockBase 
 {

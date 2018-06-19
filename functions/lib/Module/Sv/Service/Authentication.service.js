@@ -8,6 +8,9 @@ exports.AuthenService = {
     },
     getServiceSnap: function () {
         return exports.AuthenService.serviceSnap;
+    },
+    getServiceId: function () {
+        return exports.AuthenService.serviceSnap ? exports.AuthenService.serviceSnap.id : null;
     }
 };
 //# sourceMappingURL=Authentication.service.js.map

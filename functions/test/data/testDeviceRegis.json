@@ -1,0 +1,18 @@
+{
+    "organizations": [
+        {
+            "name": "CAPTOT.VN",
+            "identifier": 1642
+        }, 
+        {
+            "name": "Gói ultimate",
+            "identifier": 8206
+        }
+    ], 
+    "accountIdentifier": 14523,
+    "userFullName": "Nguyễn Ngọc Kiên",
+    "userEmail": "keyyuki@gmail.com",
+    "deviceToken": "ghjkqwjfgu26172fbn ydquw",
+    "appName": "admin mobile android",
+    "devicePlatform": "android"
+}

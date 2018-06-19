@@ -1,5 +1,5 @@
 import MockBase from './MockBase.mock';
-import { DocumentSnapshot } from '@google-cloud/firestore';
+import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 export default class OrganizationsAccounts extends MockBase 
 {
@@ -8,7 +8,9 @@ export default class OrganizationsAccounts extends MockBase
     toStandardData = (data) => {
         return {
             accountId: '',
-            organizationId: '',            
+            organizationId: '',       
+            organizationIdentifier: '',
+            accountIdentifier: '',
             ...data
         };
     }
@@ -76,5 +78,20 @@ export default class OrganizationsAccounts extends MockBase
         }
     }
 
-   
+    fetchAllByAccountId = async(accountId : String) : Promise<Array<FirebaseFirestore.QueryDocumentSnapshot>> => {
+        if(!accountId){
+            throw new Error('invalid param');   
+        }
+        try {
+            const snap = await this.db.collection(OrganizationsAccounts.TABLE_NAME)
+                .where('accountId', '==',accountId )
+                .get();
+            
+            return snap.empty ? [] : snap.docs;
+        } catch (error) {
+            console.error('Error at OrganizationsAccounts.add with params: ', {accountId});
+            console.error(error);
+            throw error;
+        }
+    }
 }

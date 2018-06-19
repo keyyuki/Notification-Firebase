@@ -34,6 +34,13 @@ export default class FormBase {
                     if(filter == 'StringTrim'){
                         value = value.toString().trim();
                     }
+                    if(filter == 'Boolean'){
+                        if('0' === value){
+                            value = false;
+                        } else {
+                            value = value ? true : false;
+                        }
+                    }
                 });
                 ele.value = value;
             }
@@ -91,15 +98,29 @@ export default class FormBase {
         if(!this.isRunIsValid){
             throw new Error('function "getValidValues" must be run after "isValid"');            
         }
-        return this.elements.map(ele => ele.value).filter(value => {
-            if(value === null || value === undefined || value === ''){
-                return false;
+        let result = {};
+        this.elements.forEach(ele => {
+            if(ele.value !== null && ele.value !== undefined ){
+                result[ele.name] = ele.value;
             }
-            return true;
-        });
+            
+        })
+        return result;
     }
 
     getErrorMessages = () => {
         return this.errorMessages;
+    }
+
+    getErrorMessagesList = () : Array<String> => {
+        let result = [];
+        if(this.errorMessages){
+            for(let key in this.errorMessages){
+                this.errorMessages[key].forEach(message => {
+                    result.push(message);
+                })
+            }
+        }
+        return result;
     }
 }

@@ -4,14 +4,8 @@ export default class RegisDeviceTokenValidate extends FormBase{
     constructor(){
         super();
   
-        this.addElement('organizationIdentifier' , {
-            isRequired: true,
-            filters: ['Digits']
-        });
-        this.addElement('organizationName' , {
-            isRequired: true,
-            filters: ['StringTrim']
-        });
+        this.addElement('organizations' , {});
+       
         this.addElement('accountIdentifier' , {
             isRequired: true,
             filters: ['Digits']

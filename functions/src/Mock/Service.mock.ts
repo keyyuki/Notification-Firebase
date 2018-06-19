@@ -1,5 +1,5 @@
 import MockBase from './MockBase.mock';
-import { DocumentSnapshot } from '@google-cloud/firestore';
+import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 
 

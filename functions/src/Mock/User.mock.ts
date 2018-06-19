@@ -1,6 +1,6 @@
 import MockBase from './MockBase.mock';
 import * as admin from 'firebase-admin';
-import { DocumentSnapshot } from '@google-cloud/firestore';
+import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 export default class UserModel extends MockBase 
 {

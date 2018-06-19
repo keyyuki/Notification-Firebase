@@ -13,7 +13,7 @@ class OrganizationsAccounts extends MockBase_mock_1.default {
     constructor() {
         super(...arguments);
         this.toStandardData = (data) => {
-            return Object.assign({ accountId: '', organizationId: '' }, data);
+            return Object.assign({ accountId: '', organizationId: '', organizationIdentifier: '', accountIdentifier: '' }, data);
         };
         this.isExisted = (accountId, organizationId) => __awaiter(this, void 0, void 0, function* () {
             if (!accountId || !organizationId) {
@@ -74,6 +74,22 @@ class OrganizationsAccounts extends MockBase_mock_1.default {
             }
             catch (error) {
                 console.error('Error at OrganizationsAccounts.add with params: ', { data });
+                console.error(error);
+                throw error;
+            }
+        });
+        this.fetchAllByAccountId = (accountId) => __awaiter(this, void 0, void 0, function* () {
+            if (!accountId) {
+                throw new Error('invalid param');
+            }
+            try {
+                const snap = yield this.db.collection(OrganizationsAccounts.TABLE_NAME)
+                    .where('accountId', '==', accountId)
+                    .get();
+                return snap.empty ? [] : snap.docs;
+            }
+            catch (error) {
+                console.error('Error at OrganizationsAccounts.add with params: ', { accountId });
                 console.error(error);
                 throw error;
             }
