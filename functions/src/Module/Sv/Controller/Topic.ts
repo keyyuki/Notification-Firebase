@@ -25,7 +25,9 @@ export const addTopicAction = async(request, response) => {
         orgDoc = await orgMock.add({
             name: formValues['organizationName'],
             identifier: formValues['organizationIdentifier'],
-            serviceId: AuthenService.getServiceSnap().id
+            serviceId: AuthenService.getServiceSnap().id,
+            createdDateTime: new Date(),
+            updatedDateTime: new Date()
         });
     }
 
@@ -46,7 +48,9 @@ export const addTopicAction = async(request, response) => {
         organizationName: orgDoc.data().name,
         organizationIdentifier: orgDoc.data().identifier,
         sendMode: TopicMock.SEND_MODE_ALL,
-        type: TopicMock.TYPE_ORGANIZATION
+        type: TopicMock.TYPE_ORGANIZATION,
+        createdDateTime: new Date(),
+        updatedDateTime: new Date()
     });
 
     
@@ -92,7 +96,10 @@ export const editTopicAction = async(request, response) => {
     }   
 
     // 5. Cập nhật thông tin cho topic
-    topicDoc = await topicMock.update(topicDoc.id, formValues);
+    topicDoc = await topicMock.update(topicDoc.id, {
+        ...formValues,
+        updatedDateTime: new Date()
+    });
 
 
     response.send({code: 1, data: {

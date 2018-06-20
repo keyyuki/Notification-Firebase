@@ -3,4 +3,4 @@ firebase.json
 /functions/node_modules/*
 /functions/config/development
 /functions/config/release
-/functions/lib
+/functions/lib/*

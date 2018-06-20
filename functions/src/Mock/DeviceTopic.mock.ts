@@ -8,6 +8,7 @@ export default class DeviceTopic extends MockBase
     static STATUS_NEW = 1;
     static STATUS_SUBSCRIBE_SUCCESS = 2;
     static STATUS_SUBSCRIBE_FAILED = 3;
+    static STATUS_DELETE_FAILED = 4;
     toStandardData = (data) => {
         return {
             serviceId: '',

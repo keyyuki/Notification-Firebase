@@ -41,7 +41,9 @@ export const registTokenAction = async(request, response) =>
         // 2.1 Thêm mới user
         userDoc = await userMock.add({
             email: formValues['userEmail'],
-            fullName: formValues['userFullName']
+            fullName: formValues['userFullName'],
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
         });
     }
 
@@ -59,7 +61,9 @@ export const registTokenAction = async(request, response) =>
             serviceName: AuthenService.getServiceSnap().get('name'),
             serviceCode: AuthenService.getServiceSnap().get('code'),
             userFullName: userDoc.get('fullName'),
-            email: formValues['userEmail']
+            email: formValues['userEmail'],
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
         });
     } 
 
@@ -77,7 +81,9 @@ export const registTokenAction = async(request, response) =>
                 org = await organizationMock.add({
                     name: orgFormData['name'],
                     identifier: orgFormData['identifier'],
-                    serviceId: AuthenService.getServiceId(),                    
+                    serviceId: AuthenService.getServiceId(),     
+                    createdDateTime: new Date(),
+                    updatedDateTime: new Date(),               
                 });
             }
 
@@ -89,7 +95,9 @@ export const registTokenAction = async(request, response) =>
                     accountId: accountDoc.id,
                     organizationId: org.id,  
                     organizationIdentifier: orgFormData['identifier'],
-                    accountIdentifier: accountDoc.get('identifier')
+                    accountIdentifier: accountDoc.get('identifier'),
+                    createdDateTime: new Date(),
+                    updatedDateTime: new Date(),
                 })
             }
         }
@@ -104,7 +112,9 @@ export const registTokenAction = async(request, response) =>
         appDoc = await appMock.add({
             name: formValues['appName'],
             platform: formValues['devicePlatform'] || null,
-            serviceId: AuthenService.getServiceSnap().id
+            serviceId: AuthenService.getServiceSnap().id,
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
         })
     }
 
@@ -117,6 +127,8 @@ export const registTokenAction = async(request, response) =>
             token: formValues['deviceToken'],
             platform: formValues['devicePlatform'],
             appId: appDoc.id,
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
         })
     }
 
@@ -130,10 +142,13 @@ export const registTokenAction = async(request, response) =>
             deviceId: deviceDoc.id,
             accountIdentifier: formValues['accountIdentifier'],
             deviceToken: formValues['deviceToken'],
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
         })
     }
 
     //8. Tìm trong bảng devices-accounts WHERE deviceId = this.device AND AccountID != this.accountId
+    // mục đích ở đây là xóa bỏ các người dùng cũ của device này
     let needDeleteAccountDevices = await accountDiviceMock.getAllByDeviceIdExceptAccountId(deviceDoc.id, accountDoc.id)
     if(needDeleteAccountDevices){
         //8.1 Lăp, lấy từng device-account vừa tìm thấy
@@ -144,6 +159,7 @@ export const registTokenAction = async(request, response) =>
     }
 
     // 9. Tạo biến autoTopics là 1 mảng topic
+    // Mảng này sẽ chứa các topic mà device cần phải đăng kí
     let autoTopics = [];
     
     // 10. Lấy danh sách các organization của account
@@ -224,7 +240,9 @@ export const registTokenAction = async(request, response) =>
                 topicId: element.id,
                 deviceToken: deviceDoc.get('token'),
                 topicCode: element.code,
-                status: DeviceTopicMock.STATUS_NEW
+                status: DeviceTopicMock.STATUS_NEW,
+                createdDateTime: new Date(),
+                updatedDateTime: new Date(),
             });
 
             // 11.5 call FCM subscribe deviceToken vào topic 

@@ -7,7 +7,9 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "mocha --reporter spec",
+    "test-online": "mocha --timeout 30000 --reporter spec test/test.online.js --exit"
   },
   "main": "lib/index.js",
   "dependencies": {
@@ -21,6 +23,11 @@
     "request": "^2.86.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "firebase-functions-test": "^0.1.1",
+    "mocha": "^5.2.0",
+    "sinon": "^6.0.0",
     "tslint": "^5.8.0",
     "typescript": "^2.5.3"
   },
