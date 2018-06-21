@@ -9,7 +9,8 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "test": "mocha --reporter spec",
-    "test-online": "mocha --timeout 30000 --reporter spec test/test.online.js --exit"
+    "test-online": "mocha --timeout 30000 --reporter spec test/test.online.js --exit",
+    "test-request-queue": "mocha --timeout 30000 --reporter spec test/testRequestQueue.js --exit"
   },
   "main": "lib/index.js",
   "dependencies": {

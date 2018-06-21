@@ -111,6 +111,23 @@ class AccountsDevices extends MockBase_mock_1.default {
             }
             return snap.docs;
         });
+        this.fetchAllByAccount = (accountId) => __awaiter(this, void 0, void 0, function* () {
+            if (!accountId) {
+                return [];
+            }
+            try {
+                const snap = yield this.db.collection(AccountsDevices.TABLE_NAME)
+                    .where('accountId', '==', accountId)
+                    .get();
+                if (snap.empty) {
+                    return [];
+                }
+                return snap.docs;
+            }
+            catch (error) {
+                return [];
+            }
+        });
     }
 }
 AccountsDevices.TABLE_NAME = 'accounts-devices';

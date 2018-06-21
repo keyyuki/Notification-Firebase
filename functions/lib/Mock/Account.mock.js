@@ -112,6 +112,27 @@ class Accounts extends MockBase_mock_1.default {
                 return false;
             }
         });
+        this.getByIdentifier = (identifier, serviceId) => __awaiter(this, void 0, void 0, function* () {
+            if (!identifier || !serviceId) {
+                throw new Error('invalid param');
+            }
+            try {
+                const snaps = yield this.db.collection(Accounts.TABLE_NAME)
+                    .where('identifier', '==', identifier)
+                    .where('serviceId', '==', serviceId)
+                    .limit(1)
+                    .get();
+                if (snaps.empty) {
+                    return null;
+                }
+                return snaps.docs.shift();
+            }
+            catch (error) {
+                console.error('Error at Accounts.getByIdentifier with params: ', { identifier, serviceId });
+                console.error(error);
+                throw error;
+            }
+        });
     }
 }
 Accounts.TABLE_NAME = 'accounts';

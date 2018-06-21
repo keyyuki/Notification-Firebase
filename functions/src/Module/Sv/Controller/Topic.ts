@@ -81,14 +81,14 @@ export const editTopicAction = async(request, response) => {
     }
 
     // 3. Kiểm tra param organizationIdentifier có trùng vơi topic.organizationIdentifier ko
-    if(topicDoc.get('organizationIdentifier') != formValues['organizationIdentifier']){
+    if(topicDoc.get('organizationIdentifier') !== formValues['organizationIdentifier']){
         response.send({code: 0, messages: ['this topic belong other organization']});
         return false
     }
 
     // 4. Kiểm tra topicCode đã được sử dụng chưa (loại trừ chính bản thân nó)
     if(formValues['topicCode']){
-        let isExisted = await topicMock.checkCodeIsExisted(formValues['topicCode'], topicDoc.id);
+        const isExisted = await topicMock.checkCodeIsExisted(formValues['topicCode'], topicDoc.id);
         if(isExisted){
             response.send({code: 0, messages: ['Mã topic đã tồn tại']});
             return false
@@ -123,7 +123,7 @@ export const listTopicAction = async(request, response) => {
 
     // 2. Tìm  theo topicId
     const topicMock = new TopicMock();
-    let topicDocs = await topicMock.fetchAll({
+    const topicDocs = await topicMock.fetchAll({
         serviceId: AuthenService.getServiceId(),
         ...formValues
     });

@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 import DeviceTopicMock from '../Mock/DeviceTopic.mock';
-import { resolve } from 'path';
+
 
 const wait = (second) => {
     return new Promise((resolve, reject) => {
@@ -23,12 +23,12 @@ const wait = (second) => {
 export const onDeviceTopicCreate = async (snap : DocumentSnapshot, context) : Promise<Boolean>=> 
 {    
     //1 Kiểm tra status của record.status == success
-    if(snap.get('status') == DeviceTopicMock.STATUS_SUBSCRIBE_SUCCESS){        
+    if(snap.get('status') === DeviceTopicMock.STATUS_SUBSCRIBE_SUCCESS){        
         return false;
     }
 
     // 2. Lặp for index 1-> 3
-    const deviceTopicMock = new DeviceTopicMock();
+    
     for (let index = 1; index <= 3; index++) {        
         //3. subcribe record.deviceToken vào record.topicCode
         try {
@@ -53,11 +53,11 @@ export const onDeviceTopicCreate = async (snap : DocumentSnapshot, context) : Pr
                 })
 
                 // 5.1. Kiểm tra responseFcm.error.code == ‘messaging/server-unavailable’
-                if(isSuccess.errors && isSuccess.errors['code'] == 'messaging/server-unavailable'){
+                if(isSuccess.errors && isSuccess.errors['code'] === 'messaging/server-unavailable'){
                     
                     //6. wait index*1000 ms
                     // nếu là bước lặp cuối cùng thì không cần đợi nữa
-                    if(index == 3){
+                    if(index === 3){
                         continue;
                     }
                     await wait(index);
@@ -76,10 +76,10 @@ export const onDeviceTopicCreate = async (snap : DocumentSnapshot, context) : Pr
 
             //6. wait index*1000 ms
             // nếu là bước lặp cuối cùng thì không cần đợi nữa
-            if(index == 3){
+            if(index === 3){
                 continue;
             }
-            wait(index);
+            await wait(index);
         }
     }
     return false;
@@ -99,12 +99,12 @@ export const onDeviceTokenDelete = async(snap : DocumentSnapshot, context) : Pro
                 return true;
             } else {
                 //2.1 kiểm tra fcmResponse.errors.code == ‘messaging/server-unavailable’
-                if(isSuccess.errors && isSuccess.errors['code'] == 'messaging/server-unavailable'){
+                if(isSuccess.errors && isSuccess.errors['code'] === 'messaging/server-unavailable'){
                     // nếu là bước lặp cuối cùng thì không cần đợi nữa
-                    if(index == 3){
+                    if(index === 3){
                         continue;
                     }
-                    wait(index);
+                    await wait(index);
                 } else {
                     //2.2 Gán errorRuntime = fcmResponse.errors
                     errorRuntime = isSuccess.errors;

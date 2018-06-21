@@ -8,13 +8,13 @@ export default class FormBase {
     errorMessages = {};
     isRunIsValid = false;
     addElement = (name, option = {}) => {
-        let element = {
+        const element = {
             name: name,
             isRequired: false,
             value: null,
             ...option
         }
-        if(this.elements.findIndex(ele => ele.name == name) == -1){
+        if(this.elements.findIndex(ele => ele.name === name) === -1){
             this.elements.push(element);
         }
         return this;
@@ -28,13 +28,13 @@ export default class FormBase {
             if(ele.filters){
                 let value = ele.value;
                 ele.filters.forEach((filter) => {
-                    if(filter == 'Digits'){
+                    if(filter === 'Digits'){
                         value = parseInt(value)
                     }
-                    if(filter == 'StringTrim'){
+                    if(filter === 'StringTrim'){
                         value = value.toString().trim();
                     }
-                    if(filter == 'Boolean'){
+                    if(filter === 'Boolean'){
                         if('0' === value){
                             value = false;
                         } else {
@@ -51,9 +51,9 @@ export default class FormBase {
     isValid = () => {
         this.filter();
         this.isRunIsValid = true;
-        let invalidElements = this.elements.filter((ele) => {
+        const invalidElements = this.elements.filter((ele) => {
             if(ele.isRequired){
-                if(ele.value == null || ele.value == ''){
+                if(ele.value === null || ele.value === ''){
                     return true;
                 }
                 // trường hợp số 0 hoặc false vẫn sẽ được pass qua
@@ -84,7 +84,7 @@ export default class FormBase {
     }
 
     getValues = () : Object => {
-        let result = {};
+        const result = {};
         if(!this.isRunIsValid){
             this.filter();
         }
@@ -98,7 +98,7 @@ export default class FormBase {
         if(!this.isRunIsValid){
             throw new Error('function "getValidValues" must be run after "isValid"');            
         }
-        let result = {};
+        const result = {};
         this.elements.forEach(ele => {
             if(ele.value !== null && ele.value !== undefined ){
                 result[ele.name] = ele.value;
@@ -113,9 +113,9 @@ export default class FormBase {
     }
 
     getErrorMessagesList = () : Array<String> => {
-        let result = [];
+        const result = [];
         if(this.errorMessages){
-            for(let key in this.errorMessages){
+            for(const key in this.errorMessages){
                 this.errorMessages[key].forEach(message => {
                     result.push(message);
                 })

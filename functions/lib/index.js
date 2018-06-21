@@ -7,6 +7,7 @@ admin.initializeApp(config_1.default.getConfig());
 // Phải init firebase app ngay đầu tiên
 const Sv_1 = require("./Module/Sv");
 const Triggle = require("./Triggle");
+const RequestQueueTriggle = require("./Triggle/RequestQueue");
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
@@ -15,4 +16,6 @@ exports.onDeviceTopicCreate = functions.firestore
     .document('devices-topics/{dtId}').onCreate(Triggle.onDeviceTopicCreate);
 exports.onDeviceTopicDelete = functions.firestore
     .document('devices-topics/{dtId}').onDelete(Triggle.onDeviceTokenDelete);
+exports.onRequestQueueCreated = functions.firestore
+    .document('request-queue/{dtId}').onCreate(RequestQueueTriggle.onCreated);
 //# sourceMappingURL=index.js.map

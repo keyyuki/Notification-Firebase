@@ -1,5 +1,4 @@
 import MockBase from './MockBase.mock';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 export default class AccountsDevices extends MockBase 
@@ -111,5 +110,22 @@ export default class AccountsDevices extends MockBase
             return null;
         }
         return snap.docs;
+    }
+
+    fetchAllByAccount = async(accountId: string) : Promise<Array<DocumentSnapshot>> => {
+        if(!accountId){
+            return [];
+        }
+        try {
+            const snap = await this.db.collection(AccountsDevices.TABLE_NAME)
+            .where('accountId', '==', accountId)
+            .get();
+            if(snap.empty){
+                return [];
+            }
+            return snap.docs;
+        } catch (error) {
+            return [];
+        }
     }
 }

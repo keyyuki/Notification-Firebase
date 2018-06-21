@@ -95,7 +95,7 @@ export default class TopicMock extends MockBase
             }
             let isExisted = false;
             snap.forEach(doc => {
-                if(doc.id != exceptId){
+                if(doc.id !== exceptId){
                     isExisted = true;
                 }
             })

@@ -7,7 +7,7 @@ export default {
     getConfig : () => {
         let config = null;
         let serviceAccount = null;
-        if(EVN == 'development'){
+        if(EVN === 'development'){
             serviceAccount = require("../../config/development/google-json-key.json");
             config = {
                 credential: admin.credential.cert(serviceAccount),
@@ -16,7 +16,7 @@ export default {
                 storageBucket: "nhanh-notification-dev.appspot.com",
                 messagingSenderId: "820207856177"
             };
-        } else if(EVN == 'application'){
+        } else if(EVN === 'application'){
             // chưa có môi trường thực, chưa setup dc
         }
         if(!config){

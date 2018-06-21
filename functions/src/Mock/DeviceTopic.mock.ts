@@ -62,7 +62,7 @@ export default class DeviceTopic extends MockBase
             throw new Error('Invalid param');
         }
         try {
-            const snap = await this.db.collection(DeviceTopic.TABLE_NAME).doc(id).delete();
+            await this.db.collection(DeviceTopic.TABLE_NAME).doc(id).delete();
             return true;
         } catch (error) {
             console.error('Error at DeviceTopic.delete with params: ', {id});

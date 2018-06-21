@@ -112,4 +112,25 @@ export default class Accounts extends MockBase
             return false;
         }
     }
+
+    getByIdentifier = async(identifier, serviceId) : Promise<DocumentSnapshot | null> => {
+        if(!identifier || !serviceId){
+            throw new Error('invalid param');    
+        }
+        try {
+            const snaps = await this.db.collection(Accounts.TABLE_NAME)
+                .where('identifier', '==', identifier)
+                .where('serviceId', '==', serviceId)
+                .limit(1)
+                .get();
+            if(snaps.empty){
+                return null;
+            }
+            return snaps.docs.shift();
+        } catch (error) {
+            console.error('Error at Accounts.getByIdentifier with params: ', {identifier, serviceId});
+            console.error(error);
+            throw error;
+        }
+    }
 }
