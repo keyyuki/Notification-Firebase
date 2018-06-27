@@ -53,3 +53,9 @@ Copy key vào phần publicVapidKey trong config firebase trong file php
 
 # users #
 - email ASC
+
+# messages #
+- topicId
+- organizationId
+- updatedDateTime
+- createdDateTime

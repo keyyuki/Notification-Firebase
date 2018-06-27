@@ -13,7 +13,7 @@ class Accounts extends MockBase_mock_1.default {
     constructor() {
         super(...arguments);
         this.toStandardData = (data) => {
-            return Object.assign({ serviceId: '', userId: '', identifier: '' }, data);
+            return Object.assign({ serviceId: '', userId: '', identifier: '', createdDateTime: new Date(), updatedDateTime: new Date() }, data);
         };
         this.isExisted = (serviceId, userId) => __awaiter(this, void 0, void 0, function* () {
             if (!serviceId || !userId) {

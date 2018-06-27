@@ -10,6 +10,8 @@ export default class Accounts extends MockBase
             serviceId: '',
             userId: '',
             identifier: '',
+            createdDateTime: new Date(),
+            updatedDateTime: new Date(),
             ...data
         };
     }

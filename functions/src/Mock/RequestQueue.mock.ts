@@ -10,6 +10,7 @@ export default class RequestQueue extends MockBase
     static STATUS_RESOLVER_ERROR = 3;
 
     static TYPE_ACCOUNT_UNSUBCRIBE_ALL = 'account.unsubcribeAll';
+    static TYPE_AUTO_UPDATE_ACCOUNT_MESSAGE_CACHE = 'autoUpdateAccountMessagesCache';
 
     toStandardData = (data) => {
         return {

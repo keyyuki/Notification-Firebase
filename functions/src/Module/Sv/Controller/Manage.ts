@@ -10,6 +10,7 @@ import DeviceMock from '../../../Mock/Device.mock';
 import AccountDeviceMock from '../../../Mock/AccountDevice.mock';
 import AccountTopicMock from '../../../Mock/AccountTopic.mock';
 import DeviceTopicMock from '../../../Mock/DeviceTopic.mock';
+import RequestQueueMock from '../../../Mock/RequestQueue.mock';
 
 import TopicMock from '../../../Mock/Topic.mock';
 
@@ -68,7 +69,7 @@ export const registTokenAction = async (request, response) => {
                 createdDateTime: new Date(),
                 updatedDateTime: new Date(),
             });
-        }
+        } 
 
         const organizationMock = new OrganizationMock();
         const organizationAccountMock = new OrganizationAccountMock();
@@ -275,6 +276,16 @@ export const registTokenAction = async (request, response) => {
             }
         }
 
+        //13 Tạo mới 1 record requestQueue type=TYPE_AUTO_UPDATE_ACCOUNT_MESSAGE_CACHE        
+        const queueMock = new RequestQueueMock();
+        await queueMock.add({
+            serviceId: AuthenService.getServiceId(),
+            type: RequestQueueMock.TYPE_AUTO_UPDATE_ACCOUNT_MESSAGE_CACHE,
+            status: RequestQueueMock.STATUS_NEW,
+            body: JSON.stringify({accountId: accountDoc.id})
+        });    
+        // after that, message of account win create automatically   
+        
         response.send({ code: 1 });
 
         return true;
