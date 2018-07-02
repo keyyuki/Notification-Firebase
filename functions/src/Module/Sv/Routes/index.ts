@@ -13,9 +13,15 @@ app.post('/topic/edit', TopicController.editTopicAction);
 app.post('/topic/list', TopicController.listTopicAction);
 app.post('/topic/get', TopicController.getAction);
 app.post('/topic/add-system', TopicController.addSystemAction);
+app.post('/topic/list-system', TopicController.systemTopicListAction);
+app.post('/topic/get-system', TopicController.getSystemTopicAction);
+app.post('/topic/edit-system', TopicController.editSystemTopicAction);
+app.post('/topic/add-account-to-topic', TopicController.addAccountToTopicAction);
+app.post('/topic/list-account-topic', TopicController.getAccountTopicListAction);
 
 app.post('/account/unsubcribe-all', AccountController.unsubcribeAllAction);
 
-app.post('/message/send-to-topic', MessageController.sendToTopic);
+app.post('/message/send-to-system-topic', MessageController.sendToSystemTopicAction);
+
 
 export default app;

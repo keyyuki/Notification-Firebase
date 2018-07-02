@@ -3,6 +3,10 @@ import EditTopicForm from '../Form/EditTopic.form';
 import ListTopicFilter from '../Form/Topic/Filter.form';
 import GetTopicForm from '../Form/Topic/Get.form';
 import AddSystemForm from '../Form/Topic/AddSystem.form';
+import SystemTopicFilter from '../Form/Topic/SystemTopicFilter.form';
+import EditSystemForm from '../Form/Topic/EditSystem.form';
+import AddAccountToTopicForm from '../Form/Topic/AddAccountToTopic.form';
+import AccountTopicListFilter from '../Form/Topic/AccountTopicList.form';
 
 import { AuthenService } from '../Service/Authentication.service';
 import OrganizationMock from '../../../Mock/Organization.mock';
@@ -10,7 +14,11 @@ import TopicMock from '../../../Mock/Topic.mock';
 import AccountMock from '../../../Mock/Account.mock';
 import AccountTopicMock from '../../../Mock/AccountTopic.mock';
 import UserMock from '../../../Mock/User.mock';
+import AccountDeviceMock from '../../../Mock/AccountDevice.mock';
+import DeviceTopicMock from '../../../Mock/DeviceTopic.mock';
 import * as moment from 'moment';
+
+
 
 export const addTopicAction = async(request, response) => {
     const formValidate = new AddTopicForm();
@@ -185,7 +193,7 @@ export const getAction = async(request, response) : Promise<Boolean> => {
         return false;
     }
 
-    //4. lấy danh sách account-topic
+    //4. lấy  topic
     const result = {
         id: topicDoc.id,
         name: topicDoc.get('name'),
@@ -318,6 +326,8 @@ export const addSystemAction = async(request, response) => {
                 accountIdentifier: account.get('identifier'),
                 topicCode: account.get('code'),
             })
+
+            
         }
         
     }
@@ -328,5 +338,368 @@ export const addSystemAction = async(request, response) => {
             ...topic.data()
         }
     });
+    return true;
+}
+
+export const systemTopicListAction = async(request, response) => {
+    const formValidate = new SystemTopicFilter();
+    formValidate.setValues(request.body);
+
+    //1. Validate form
+    if(!formValidate.isValid()){
+        response.send({
+            code: 0,
+            messages: formValidate.getErrorMessagesList()
+        });
+        return false;
+    }
+
+    const topicMock = new TopicMock();
+    const topicDocs = await topicMock.fetchAll({
+        serviceId: AuthenService.getServiceId(),
+        ...formValidate.getValidValues(),
+        type: TopicMock.TYPE_SYSTEM
+    });
+
+    const result = topicDocs.map(ele => {
+        const obj = {
+            id: ele.id,
+            name: ele.get('name'),
+            code: ele.get('code'),
+            status: ele.get('status'),
+            sendMode: ele.get('sendMode'),
+            sendModeName:'',
+            createdDateTime: ele.get('createdDateTime')
+        };
+        if(ele.get('sendMode') === TopicMock.SEND_MODE_ALL){
+            obj.sendModeName = 'all';
+        }
+        if(ele.get('sendMode') === TopicMock.SEND_MODE_INDIVIDUAL){
+            obj.sendModeName = 'individual';
+        }
+        
+        return obj;
+    });
+
+    response.send({
+        code: 1,
+        data: {
+            filter: formValidate.getValidValues(),
+            data: result
+        }
+    });
+    return true;
+}
+
+export const getSystemTopicAction = async(request, response) => {
+    if(!request.body || !request.body.id){
+        response.send({
+            code: 0,
+            messages: ['invalid param']
+        });
+        return false;
+    }
+    const id = String(request.body.id).toString();
+    if(!id){
+        response.send({
+            code: 0,
+            messages: ['invalid param']
+        });
+        return false;
+    }
+
+    const topicMock = new TopicMock();
+    const topicDoc = await topicMock.get(id);
+    if(!topicDoc){
+        response.send({
+            code: 0,
+            messages: ['Topic not found']
+        });
+        return false;
+    }
+
+    if(topicDoc.get('type') !== TopicMock.TYPE_SYSTEM){
+        response.send({
+            code: 0,
+            messages: ['Topic không phải topic hệ thống']
+        });
+        return false;
+    }
+
+    const result = {
+        id: topicDoc.id,
+        name: topicDoc.get('name'),
+        code: topicDoc.get('code'),
+        status: topicDoc.get('status'),
+        sendMode: topicDoc.get('sendMode'),
+        sendModeName:'',
+        createdDateTime: topicDoc.get('createdDateTime'),
+        messageTemplate: {},
+        totalAccount: 0
+    }
+
+    if(topicDoc.get('sendMode') === TopicMock.SEND_MODE_ALL){
+        result.sendModeName = 'all';
+    }
+    if(topicDoc.get('sendMode') === TopicMock.SEND_MODE_INDIVIDUAL){
+        result.sendModeName = 'individual';
+    }
+
+    if(topicDoc.get('messageTemplate')){
+        result.messageTemplate = JSON.parse(topicDoc.get('messageTemplate'))
+    }
+
+    const accountTopicMock = new AccountTopicMock();
+    result.totalAccount = await accountTopicMock.getTotalAccountOfTopic(topicDoc.id);
+
+    response.send({
+        code: 1,
+        data: result
+    });
+    return true;
+}
+
+export const editSystemTopicAction = async(request, response) => {
+    const formValidate = new EditSystemForm();
+    formValidate.setValues(request.body);
+
+    //1. Validate form
+    if(!formValidate.isValid()){
+        response.send({
+            code: 0,
+            messages: formValidate.getErrorMessagesList()
+        });
+        return false;
+    }
+    const formValues = formValidate.getValues();
+
+    // 2. tìm kiếm Topic
+    const topicMock = new TopicMock();
+    const topicDoc = await topicMock.get(formValues['id']);
+    if(!topicDoc){
+        response.send({
+            code: 0,
+            messages: ['Topic not found']
+        });
+        return false;
+    }
+
+    if(topicDoc.get('type') !== TopicMock.TYPE_SYSTEM){
+        response.send({
+            code: 0,
+            messages: ['Topic không phải topic hệ thống']
+        });
+        return false;
+    }
+
+    
+    const dataUpdate = {
+        ...formValues,
+        updatedDateTime: new Date()
+    };
+    delete dataUpdate['id'];
+    await topicMock.update(formValues['id'], dataUpdate);
+    response.send({
+        code: 1,        
+    });
+    return true;
+
+}
+
+export const addAccountToTopicAction = async(request, response) => {
+    const formValidate = new AddAccountToTopicForm();
+    formValidate.setValues(request.body);
+
+    //1. Validate form
+    if(!formValidate.isValid()){
+        response.send({
+            code: 0,
+            messages: formValidate.getErrorMessagesList()
+        });
+        return false;
+    }
+    const formValues = formValidate.getValues();
+
+    //2. Tìm kiếm topic theo topicId
+    const topicMock = new TopicMock();
+    const topicDoc = await topicMock.get(formValues['topicId']);
+    if(!topicDoc){
+        response.send({
+            code: 0,
+            messages: ['Topic not found']
+        });
+        return false;
+    }
+
+    if(topicDoc.get('status') !== TopicMock.STATUS_ACTIVE){
+        response.send({
+            code: 0,
+            messages: ['Topic is inactive']
+        });
+        return false;
+    }
+
+    if(topicDoc.get('sendMode') === TopicMock.SEND_MODE_ALL){
+        response.send({
+            code: 0,
+            messages: ['Topic have sendMode all']
+        });
+        return false;
+    }
+
+    //3. tạo biến accountList = Object
+    const accountList = {};
+
+    //3.1 Lặp duyệt từng phần tử trong param accounts as acc
+    const accountMock =  new AccountMock();
+    const userMock = new UserMock();
+    for (const acc of formValues['accounts']) {
+        
+        //3.2 Tìm kiếm account theo acc.id
+        let account = await accountMock.getByIdentifier(acc['id'], AuthenService.getServiceId());
+        if(!account){
+            //3.2.1 tìm kiếm user theo acc.email
+            let user = await userMock.getByEmail(acc['email']);
+            if(!user){
+                // 3.2.2 tạo mới user
+                user = await userMock.add({
+                    email: acc['email'],
+                    fullName: acc['fullName'] || '',
+                    createdDateTime: new Date()
+                })
+            }
+
+            //3.3 Tạo mới account
+            account = await accountMock.add({
+                serviceId: AuthenService.getServiceId(),
+                userId: user.id,
+                identifier: parseInt(acc['id']),
+                createdDateTime: new Date(),
+                updatedDateTime: new Date(),
+            });
+
+        }
+
+        //3.4 Bổ sung vào biến accountList
+        accountList[account.id] = account;
+    }
+
+    //4 Tạo biến deviceList = {}
+    const deviceList = {};
+
+    const accountDeviceMock = new AccountDeviceMock();
+    const accountTopicMock = new AccountTopicMock();
+    //5 duyệt foreach accountList as account
+    for (const accountId of Object.keys(accountList)) {
+        const account = accountList[accountId];
+
+        //5.1 Tìm danh sách các account-device của account
+        const ads = await accountDeviceMock.fetchAllByAccount(accountId);
+        
+        //5.2 Bổ sung các device vào biến deviceList
+        for (const accountDevice of ads) {
+            deviceList[accountDevice.get('deviceId')] = {
+                deviceId: accountDevice.get('deviceId'),
+                deviceToken: accountDevice.get('deviceToken'),
+            };
+        }
+
+        //5.3 Kiểm tra đã tồn tại account-topic chưa thì bổ sung account-topic
+        const isAccountTopicExisted = accountTopicMock.isExisted(accountId, topicDoc.id);
+        if(!isAccountTopicExisted){
+            await accountTopicMock.add({
+                serviceId: AuthenService.getServiceId(),
+                topicId: topicDoc.id,
+                accountId: accountId,
+                accountIdentifier: account.get('identifier'),
+                topicCode: topicDoc.get('code'),
+                createdByAccountId: formValues['senderAccountId'],
+                createdDateTime: new Date()
+            });
+        }
+    }
+
+    const deviceTopicMock = new DeviceTopicMock();
+    //6. duyệt biến foreach deviceList as device
+    for (const deviceId of Object.keys(deviceList)) {
+        const deviceInfo = deviceList[deviceId];
+        const isexistedDeviceTopic = await deviceTopicMock.isExisted(deviceId, topicDoc.id);
+        if(!isexistedDeviceTopic){
+            await deviceTopicMock.add({
+                serviceId: AuthenService.getServiceId(),
+                deviceId: deviceId,
+                topicId: topicDoc.id,
+                deviceToken: deviceInfo['deviceToken'],
+                topicCode: topicDoc.get('code'),
+                status: DeviceTopicMock.STATUS_NEW,
+                createdDateTime: new Date()
+            })
+        }
+    }
+
+    response.send({code: 1});
+    return true;
+}
+
+export const getAccountTopicListAction = async(request, response) => {
+    const formValidate = new AccountTopicListFilter();
+    formValidate.setValues(request.body);
+
+    //1. Validate form
+    if(!formValidate.isValid()){
+        response.send({
+            code: 0,
+            messages: formValidate.getErrorMessagesList()
+        });
+        return false;
+    }
+    const formValues = formValidate.getValues();
+
+    //2. Tìm kiếm topic theo topicId
+    const topicMock = new TopicMock();
+    const topicDoc = await topicMock.get(formValues['topicId']);
+    if(!topicDoc){
+        response.send({
+            code: 0,
+            messages: ['Topic not found']
+        });
+        return false;
+    }    
+
+    if(topicDoc.get('sendMode') === TopicMock.SEND_MODE_ALL){
+        response.send({
+            code: 0,
+            messages: ['Topic have sendMode all']
+        });
+        return false;
+    }
+
+    //
+    const accountTopicMock = new AccountTopicMock();
+    const docs = await accountTopicMock.search({
+        serviceId: AuthenService.getServiceId(),
+        ...formValues
+    });
+
+    const data = docs.map(doc => {
+        return {
+            id: doc.id,
+            ...doc.data()
+        }
+    });
+
+    const lastDoc = docs.pop();
+
+    const result ={
+        data: data,
+        paginator: {
+            next_page_token: lastDoc.get('accountIdentifier')
+        }
+    }
+
+    response.send({
+        code: 1,
+        data: result
+    })
     return true;
 }

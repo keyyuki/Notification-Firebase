@@ -27,7 +27,9 @@ app.get('/', (req, res) => {
     res.send('please use route /manage !');
     return true;
 })
-
+app.use(function (req, res, next) {
+    res.status(404).send({code: 0, messages: ['404 Page not found']});
+})
 
 
 export default app;

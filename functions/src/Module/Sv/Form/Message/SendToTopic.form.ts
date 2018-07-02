@@ -6,7 +6,7 @@ export default class SendToTopicForm extends FormBase{
     constructor(){
         super();       
 
-        this.addElement('topicCode' , {
+        this.addElement('topicId' , {
             isRequired: true,
             filters: ['String']
         });
@@ -25,6 +25,15 @@ export default class SendToTopicForm extends FormBase{
             isRequired: false,
             filters: ['String']
         });
+
+        this.addElement('web_icon', {
+            isRequired: false,
+            filters: ['String']
+        })
+        this.addElement('web_click_action', {
+            isRequired: false,
+            filters: ['String']
+        })
 
         this.addElement('icon' , {
             isRequired: false,

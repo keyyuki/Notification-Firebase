@@ -19,12 +19,6 @@ const toMessageForm = (values) : admin.messaging.Message => {
             ts: moment.utc().valueOf().toString(),
             topicName: values['topicName'],
 
-        },
-        webpush: {
-            notification: {
-                icon : 'https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_96dp.png',
-                click_action: '/admin'
-            }
         }
     };
     
@@ -39,14 +33,27 @@ const toMessageForm = (values) : admin.messaging.Message => {
 
     if(values['topicName']){
         result.data['topicName'] = values['topicName'];
-
     }
-    
+
+    // [START webpush]
+    if(values['web_icon'] || values['web_click_action']){
+        result['webpush'] = {
+            notification: {}
+        }
+        if(values['web_icon']){
+            result['webpush']['notification']['icon'] = values['web_icon']
+        }
+        if(values['web_click_action']){
+            result['webpush']['notification']['click_action'] = values['web_click_action']
+        }
+        
+    }
+    //[END webpush]
     return result;
 }
 
 
-export const sendToTopic = async( request : Request, response: Response ): Promise<Boolean> =>{
+export const sendToSystemTopicAction = async( request : Request, response: Response ): Promise<Boolean> =>{
     const formValidate = new SendToTopicForm();
     formValidate.setValues(request.body);
     //1. Validate form
@@ -57,17 +64,24 @@ export const sendToTopic = async( request : Request, response: Response ): Promi
     //2. tạo biến formValues = form.values
     const formValues = formValidate.getValues();
 
-    //3. Tìm topic theo formValues.topicCode
+    //3. Tìm topic theo formValues.topicId
     const topicMock = new TopicMock();
-    const topicDoc = await topicMock.isExisted(formValues['topicCode']);
+    const topicDoc = await topicMock.get(formValues['topicId']);
     if(!topicDoc){
         response.send({code: 0, messages: ['Topic not found']});
         return false;
     }
 
+    // 3.1 kiểm tra topic có phải system không
+    if(topicDoc.get('type') !== TopicMock.TYPE_SYSTEM){
+        response.send({code: 0, messages: ['Topic không phải dạng hệ thống']});
+        return false;
+    }
+
     const fcmFormData = toMessageForm({
         ...formValues,
-        topicName: topicDoc.get('name')
+        topicName: topicDoc.get('name'),
+        topicCode: topicDoc.get('code'),
     });
 
     //4. tạo mới record messageDoc trong bảng message
@@ -77,13 +91,14 @@ export const sendToTopic = async( request : Request, response: Response ): Promi
 
         topicId: topicDoc.id,
         topicCode: topicDoc.get('code'),
-        organizationId: topicDoc.get('organizationId'),
-        organizationIdentifier: topicDoc.get('organizationIdentifier'),
+        organizationId: '',
+        organizationIdentifier: '',
         senderAccountIdentifier: formValues['senderAccountIdentifier'],
         title: formValues['title'],
         body: formValues['body'],
-        fcmRequest: JSON.stringify(fcmFormData),
-        formData: JSON.stringify(formValues),
+
+        fcmRequest: fcmFormData,
+        formData: formValues,
 
         status: MessageMock.STATUS_NEW,
         sendType: MessageMock.SENDTYPE_TOPIC,
