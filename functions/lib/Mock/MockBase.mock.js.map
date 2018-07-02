@@ -1,1 +1,0 @@
-{"version":3,"file":"MockBase.mock.js","sourceRoot":"","sources":["../../src/Mock/MockBase.mock.ts"],"names":[],"mappings":";;AAAA,wCAAwC;AAGxC;IAAA;QAEI,OAAE,GAAG,KAAK,CAAC,GAAG,EAAE,CAAC,SAAS,EAAE,CAAC;QAE7B,eAAU,GAAG,IAAI,CAAC;QAElB,kBAAa,GAAG,GAAsC,EAAE;YACpD,OAAO,IAAI,CAAC,UAAU,CAAC;QAC3B,CAAC,CAAA;IACL,CAAC;;AARU,mBAAU,GAAG,EAAE,CAAC;AAU3B,kBAAe,QAAQ,CAAC"}
